@@ -1,10 +1,15 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
+import {isDbError} from "astro:db";
 import showFormError from "../utils/showFormError";
-import { findUser } from "../../db/models/User";
-import { createCookie } from "../utils/cookies";
+import {findUser} from "../../db/models/User";
+
+export const prerender = false;
+
+console.log(import.meta.env.MODE);
 
 const formResult: FormResult = {};
+
 if (Astro.request.method === "POST") {
     try {
         const formData = await Astro.request.formData();
@@ -12,13 +17,16 @@ if (Astro.request.method === "POST") {
         const password = formData.get("password") as string;
         const user = await findUser({ email, password });
         if (!user) {
-            formResult.error = "Cet utilisateur n'existe pas.";
+            formResult.error = true;
         } else {
             formResult.user = user;
-            createCookie(Astro.cookies, "userid", user.id.toString());
         }
     } catch (e) {
-        formResult.error = true;
+        if (isDbError(e)) {
+            formResult.error = true;
+        } else {
+            formResult.error = true;
+        }
     }
 }
 ---
@@ -40,9 +48,7 @@ if (Astro.request.method === "POST") {
                     {showFormError(formResult)}
                 </p>
             )}
-            <button class="bg-stone-800 dark:bg-black hover:bg-stone-950 text-white rounded-sm px-4 py-2 w-full">
-                Se connecter
-            </button>
+            <button class="bg-stone-800 hover:bg-stone-950 text-white rounded-sm px-4 py-2 w-full">Se connecter</button>
         </form>
     </div>
 </PageLayout>
@@ -58,7 +64,6 @@ if (Astro.request.method === "POST") {
         input {
             @apply block border border-gray-200 rounded-sm shadow-sm w-full;
             @apply py-2 px-4;
-            @apply text-gray-900;
         }
     }
 </style>

@@ -9,6 +9,7 @@ interface Props {
     wide?: boolean;
 }
 
+const isLoggedIn = Astro.cookies.has("userid");
 const pn = Astro.url.pathname;
 const { wide, title } = Astro.props;
 const pages = [
@@ -19,12 +20,12 @@ const pages = [
 ---
 
 <!doctype html>
-<html lang="en" class={`text-[#0f131f] dark:text-white`}>
+<html lang="en" class="text-[#0f131f] dark:text-white">
     <head>
         <BaseHead {title} description="Some random description" />
     </head>
-    <body class={`min-h-screen m-0 bg-[#f5f6f9] dark:bg-sky-950`}>
-        <header class={`bg-white dark:bg-[#1c1e26] w-full h-[10vh] px-8 grid grid-cols-3 items-center`}>
+    <body class="min-h-screen m-0 bg-[#f5f6f9] dark:bg-[#1d1f20]">
+        <header class="bg-white dark:bg-[#181a1b] w-full h-[10vh] px-8 grid grid-cols-3 items-center">
             <h1 class="text-2xl font-bold">Astro Blog</h1>
             <nav class="h-full flex justify-center">
                 <ul class="flex p-0 [&_a]:text-xl [&_a]:mx-3">
@@ -40,10 +41,16 @@ const pages = [
                 </ul>
             </nav>
             <nav>
-                <ul class="flex p-0 justify-end">
-                    <li class="mr-4">
-                        <a href="/login" class="text-4xl"><Icon name="mdi:user-circle-outline" /></a>
-                    </li>
+                <ul class="flex p-0 justify-end space-x-4">
+                    {!isLoggedIn ? (
+                        <li>
+                            <a href="/login" class="text-4xl"><Icon name="mdi:user-circle-outline" /></a>
+                        </li>
+                    ) : (
+                        <li>
+                            <a href="/logout" class="text-4xl"><Icon name="mdi:log-out" /></a>
+                        </li>
+                    )}
                     <li>
                         <a href="https://github.com/ThomasGysemans" target="_blank" class="text-4xl">
                             <Icon name="mdi:github" />
