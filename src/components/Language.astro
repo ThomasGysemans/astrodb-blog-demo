@@ -1,0 +1,16 @@
+---
+import { LANGUAGES } from "../constants";
+import { Icon } from "astro-icon/components";
+
+interface Props {
+    name: string;
+}
+
+const { name } = Astro.props;
+const language = LANGUAGES[name as keyof typeof LANGUAGES];
+---
+
+<div class={`rounded-lg inline-flex items-center px-2 py-1 mr-2 whitespace-nowrap ${language.bg_color}`}>
+    <Icon name={language.logo} />
+    <span class="ml-2">{name}</span>
+</div>

@@ -1,0 +1,61 @@
+---
+import "../styles/globals.scss";
+import "../styles/tailwind.css";
+import BaseHead from "../components/BaseHead.astro";
+import { Icon } from "astro-icon/components";
+
+interface Props {
+    title: string;
+    wide?: boolean;
+}
+
+const pn = Astro.url.pathname;
+const { wide, title } = Astro.props;
+const pages = [
+    { href: "/", name: "Home" },
+    { href: "/blog", name: "Blog" },
+    { href: "/about", name: "About" },
+];
+---
+
+<!doctype html>
+<html lang="en" class={`text-[#0f131f] dark:text-white`}>
+    <head>
+        <BaseHead {title} description="Some random description" />
+    </head>
+    <body class={`min-h-screen m-0 bg-[#f5f6f9] dark:bg-sky-950`}>
+        <header class={`bg-white dark:bg-[#1c1e26] w-full h-[10vh] px-8 grid grid-cols-3 items-center`}>
+            <h1 class="text-2xl font-bold">Astro Blog</h1>
+            <nav class="h-full flex justify-center">
+                <ul class="flex p-0 [&_a]:text-xl [&_a]:mx-3">
+                    {
+                        pages.map((p) => (
+                            <li>
+                                <a href={p.href} class={`c-nav-link ${p.href === pn ? "active" : ""}`}>
+                                    {p.name}
+                                </a>
+                            </li>
+                        ))
+                    }
+                </ul>
+            </nav>
+            <nav>
+                <ul class="flex p-0 justify-end">
+                    <li class="mr-4">
+                        <a href="/login" class="text-4xl"><Icon name="mdi:user-circle-outline" /></a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/ThomasGysemans" target="_blank" class="text-4xl">
+                            <Icon name="mdi:github" />
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <main class="flex justify-center">
+            <div class:list={["mt-10", { "w-3/6": !wide, "w-full": wide }]}>
+                <slot />
+            </div>
+        </main>
+    </body>
+</html>

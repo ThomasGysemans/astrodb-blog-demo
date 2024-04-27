@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    .c-nav-link {
+        @apply flex items-center h-full border-b-[4px] border-b-transparent;
+    }
+
+    .c-nav-link.active {
+        @apply font-bold border-b-blue-800;
+    }
+}
+
+@layer components {
+    .c-text-p {
+        @apply leading-7 text-lg my-4
+    }
+}
