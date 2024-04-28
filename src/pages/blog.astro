@@ -1,41 +1,27 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
 import Language from "../components/Language.astro";
-
-const articles: BlogArticle[] = [
-    {
-        id: 514,
-        title: "This is a title",
-        text: "Hello",
-        date: new Date(),
-        themes: ["svelte", "tailwind"],
-        description: "Hello",
-    },
-    {
-        id: 13,
-        title: "And yet another",
-        text: "Hola",
-        date: new Date(),
-        themes: ["svelte"],
-        description: "This is a good one",
-    },
-];
+import { DAOArticle } from "../../db/models/DAOArticle";
 
 function formatDate(date: Date): string {
-    return date.toLocaleDateString("default", {
+    return date.toLocaleDateString("fr-fR", {
         dateStyle: "long",
     });
 }
+
+const articles = await DAOArticle.findPresentations();
 ---
 
-<PageLayout title="Page 2" wide={true}>
+<PageLayout title="Blog" wide>
     <h1 class="font-bold text-5xl mb-10 text-center">Les articles de blog</h1>
     <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,350px))] justify-center gap-4 px-5">
         {articles.map(article => {
             return (
                 <div class="rounded-sm shadow-sm p-4 bg-white dark:bg-[#181a1b] w-1/4 min-w-80 max-w-96">
                     <h2 class="font-bold text-2xl">{article.title}</h2>
-                    <span class="font-light text-xs text-stone-400 mt-2 block">{formatDate(article.date)}</span>
+                    <span class="font-light text-xs text-stone-400 mt-2 block">
+                        Écrit par {article.authorName} le {formatDate(article.date)}
+                    </span>
                     <p class="text-lg mt-3 mb-4">{article.description}</p>
                     <div>
                         {article.themes.map(p => <Language name={p} />)}

@@ -17,6 +17,7 @@ if (Astro.request.method === "POST") {
             formResult.user = user;
             createCookie(Astro.cookies, "userid", user.id.toString());
         }
+        return Astro.redirect("/");
     } catch (e) {
         formResult.error = true;
     }
