@@ -1,0 +1,102 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+import BlogPage from "../components/BlogPage.astro";
+import ThemePicker from "../components/svelte/ThemePicker.svelte";
+import ImageInput from "../components/svelte/ImageInput.svelte";
+import { DAOTheme } from "../../db/models/DAOTheme";
+import { DAOArticle } from "../../db/models/DAOArticle";
+import { isStorageError } from "@supabase/storage-js";
+import { storeImage } from "../../db/storage";
+import showFormError from "../utils/showFormError";
+
+const themes = await DAOTheme.findAll();
+let formState = {
+    title: "",
+    description: "",
+    content: "",
+    themes: []
+};
+
+const formResult: FormResult = {};
+if (Astro.request.method === "POST") {
+    if (!Astro.cookies.has("userid")) {
+        return Astro.redirect("/login");
+    }
+    const data = await Astro.request.formData();
+    const picture = (data.get("picture") as File);
+    const themesValue = data.get("themes") as string;
+    formState = {
+        title: (data.get("title") as string).trim(),
+        content: (data.get("content") as string).trim(),
+        description: (data.get("description") as string).trim(),
+        themes: themesValue.length === 0 ? [] : themesValue.split(','),
+    };
+    if (formState.themes.length === 0) {
+        formResult.error = "Un thème doit être sélectionné !";
+    } else {
+        try {
+            const imgPath = await storeImage(picture);
+            if (isStorageError(imgPath)) {
+                formResult.error = "Impossible de sauvegarder l'image";
+            } else {
+                await DAOArticle.saveArticle({
+                    ...formState,
+                    picture: imgPath,
+                }, parseInt(Astro.cookies.get("userid").value));
+                return Astro.redirect("/blog");
+            }
+        } catch (e) {
+            formResult.error = true;
+        }
+    }
+}
+---
+
+<PageLayout title="Écris ton post">
+    <BlogPage title="Écris ton post">
+        <form method="post" class="mb-40" enctype="multipart/form-data">
+            <div>
+                <label for="title">Titre de l'article</label>
+                <input id="title" name="title" type="text" value={formState.title} required />
+            </div>
+            <div>
+                <label for="description">Description</label>
+                <textarea id="description" name="description" required>{formState.description}</textarea>
+            </div>
+            <div>
+                <label for="content">Article</label>
+                <textarea id="content" name="content" required>{formState.content}</textarea>
+            </div>
+            <label>Thèmes</label>
+            <ThemePicker {themes} initialThemes={formState.themes} client:only="svelte" />
+            {formResult.error && (
+                <p class="text-center text-red-500 mt-4">{showFormError(formResult)}</p>
+            )}
+            <div class="mt-4">
+                <ImageInput client:only="svelte" />
+            </div>
+            <div class="flex items-center justify-center mt-6">
+                <button type="submit" class="bg-black text-white px-10 py-2">
+                    Publier
+                </button>
+            </div>
+        </form>
+    </BlogPage>
+</PageLayout>
+
+<style lang="scss">
+    label {
+        @apply block leading-7 text-lg my-4;
+
+        & + input,
+        & + textarea {
+            @apply text-gray-900 dark:text-white border-2 rounded-sm py-2 px-3;
+            @apply bg-white dark:bg-[#121212];
+            @apply border-gray-400 dark:border-gray-950;
+        }
+
+        & + textarea {
+            @apply w-full min-h-36;
+        }
+    }
+</style>

@@ -13,6 +13,9 @@ export const onRequest = defineMiddleware((context, next) => {
         }
         return context.redirect("/");
     }
+    if (pathname === "/post" && !loggedIn) {
+        return context.redirect("/login");
+    }
 
     return next();
 });

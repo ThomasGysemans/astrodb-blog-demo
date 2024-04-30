@@ -1,0 +1,18 @@
+---
+import { DAOArticle } from "../../../../db/models/DAOArticle";
+import { loadImage } from "../../../../db/storage";
+import PageLayout from "../../../layouts/PageLayout.astro";
+import BlogPage from "../../../components/BlogPage.astro";
+
+const blogId = parseInt(Astro.params.id);
+const article = await DAOArticle.findById(blogId);
+const picture = article.picture && loadImage(article.picture);
+---
+
+<PageLayout title=`Blog ${article.title}`>
+    <BlogPage>
+        <p class="c-text-p">{article.title}</p>
+        <p class="c-text-p">{article.text}</p>
+        <img src={picture ?? ""} alt="Image de svelte" />
+    </BlogPage>
+</PageLayout>

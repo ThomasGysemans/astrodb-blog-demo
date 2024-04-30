@@ -20,6 +20,7 @@ const Article = defineTable({
         date: column.date(),
         description: column.text(),
         text: column.text(),
+        picture: column.text({ optional: true }),
     },
     indexes: [
         { on: ["id", "author"], unique: true }
@@ -37,6 +38,9 @@ const ArticleThemes = defineTable({
         articleId: column.number({ references: () => Article.columns.id }),
         theme: column.text({ references: () => Theme.columns.theme }),
     },
+    indexes: [
+        { on: ["articleId", "theme"], unique: true }
+    ],
 });
 
 // https://astro.build/db/config

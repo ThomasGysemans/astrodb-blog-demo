@@ -20,6 +20,7 @@ async function seedBlogArticles() {
             text: "This is a very interesting blog post",
             title: "An interesting blog post",
             description: "Very interesting indeed",
+            picture: null,
         }
     ]);
 }

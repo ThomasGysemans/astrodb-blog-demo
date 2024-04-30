@@ -1,8 +1,8 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
 import showFormError from "../utils/showFormError";
-import { findUser } from "../../db/models/User";
 import { createCookie } from "../utils/cookies";
+import { DAOUser } from "../../db/models/DAOUser";
 
 const formResult: FormResult = {};
 if (Astro.request.method === "POST") {
@@ -10,7 +10,7 @@ if (Astro.request.method === "POST") {
         const formData = await Astro.request.formData();
         const email = (formData.get("email") as string).trim();
         const password = formData.get("password") as string;
-        const user = await findUser({ email, password });
+        const user = await DAOUser.findUser({ email, password });
         if (!user) {
             formResult.error = "Cet utilisateur n'existe pas.";
         } else {

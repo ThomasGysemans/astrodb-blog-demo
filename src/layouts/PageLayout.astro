@@ -44,15 +44,19 @@ const pages = [
                 <ul class="flex p-0 justify-end space-x-4">
                     {!isLoggedIn ? (
                         <li>
-                            <a href="/login" class="text-4xl"><Icon name="mdi:user-circle-outline" /></a>
+                            <a href="/login" class="text-4xl" title="Se connecter" aria-label="Se connecter">
+                                <Icon name="mdi:user-circle-outline" />
+                            </a>
                         </li>
                     ) : (
                         <li>
-                            <a href="/logout" class="text-4xl"><Icon name="mdi:log-out" /></a>
+                            <a href="/logout" class="text-4xl" title="Se déconnecter" aria-label="Se déconnecter">
+                                <Icon name="mdi:log-out" />
+                            </a>
                         </li>
                     )}
                     <li>
-                        <a href="https://github.com/ThomasGysemans" target="_blank" class="text-4xl">
+                        <a href="https://github.com/ThomasGysemans" target="_blank" class="text-4xl" title="GitHub" aria-label="GitHub">
                             <Icon name="mdi:github" />
                         </a>
                     </li>
