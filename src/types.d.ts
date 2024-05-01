@@ -11,4 +11,3 @@ declare global {
         url: { origin: string },
     }
 }
-
